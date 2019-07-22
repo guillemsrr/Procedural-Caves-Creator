@@ -1,0 +1,157 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6032407400095511800
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6032407400095511750}
+  - component: {fileID: 6032407400095511751}
+  m_Layer: 0
+  m_Name: Floor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6032407400095511750
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6032407400095511800}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6032407400095511751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6032407400095511800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db53533d1c6ff4e468b7bbbeaa7ea1e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HexPrefab: {fileID: 93635823441768483, guid: fa9130ea6d78341498cd08e6c81c8518, type: 3}
+  HexHoledDownPrefab: {fileID: 93635823441768483, guid: eeeb325de3ce418479a1a5c8e17ed911,
+    type: 3}
+  HexHoledUpPrefab: {fileID: 93635823441768483, guid: 7d9df88b31b8ac140b87d0e3d1564f99,
+    type: 3}
+  emptyCavePrefab: {fileID: 1521947503486928270, guid: 052236ec5850f1742994d646f466e02c,
+    type: 3}
+  wall_Left_A_T_Prefab: {fileID: 725538953268465192, guid: ef790899520ae78458dea9310785e9bf,
+    type: 3}
+  wall_Right_A_T_Prefab: {fileID: 3176057964720408567, guid: 6b6851164ddc22b428a18c96fe3fb81a,
+    type: 3}
+  wall_Left_B_Prefab: {fileID: 3754005067461297831, guid: e8bb61c7e101dcc4c85d84f1567feb19,
+    type: 3}
+  wall_Left_B_T_Prefab: {fileID: 4777120183476312684, guid: 8b13baf4b7193c44883873d4048d6bb4,
+    type: 3}
+  wall_Right_B_Prefab: {fileID: 8415542021189989287, guid: 1fa3095769362af4a87f1814a380561c,
+    type: 3}
+  wall_Right_B_T_Prefab: {fileID: 2808099610533961388, guid: 2f018d91f173bc347ae23c23cfa218e2,
+    type: 3}
+  tunnel_Cap_A_Prefab: {fileID: 5027854925193208590, guid: 1251f101d15730e4ca41e5566fbfe9a9,
+    type: 3}
+  tunnel_Cap_B_Prefab: {fileID: 5027854925193208590, guid: 8c9b6927645073b43b936b7ab8ed0acb,
+    type: 3}
+  tunnel_mid_forward: {fileID: 5027854925193208590, guid: efc2b723366ca004b9af739727da50a4,
+    type: 3}
+  tunnel_mid_vertical: {fileID: 5027854925193208590, guid: c0017d90faaae404db4bda8f13c189e1,
+    type: 3}
+  tunnelDiag_Cap_L_Prefab: {fileID: 6851475610222234121, guid: 2f80ce4fd340b6d40a661de3ec8a14ef,
+    type: 3}
+  tunnelDiag_Cap_R_Prefab: {fileID: 6851475610222234121, guid: 730b24e1ff3b36a40821ae0cbc1b23e1,
+    type: 3}
+  tunnelDiag_Connector_LR_Prefab: {fileID: 6851475610222234121, guid: 5f390b2573920ac42805d6bd67b44647,
+    type: 3}
+  tunnelDiag_Connector_RL_Prefab: {fileID: 6851475610222234121, guid: c15dbfa786052584392058c8fe0ec2fb,
+    type: 3}
+  tunnelDiag_Left_Prefab: {fileID: 4042357561744130010, guid: ef362c6b2fc611242baff1e2fb0b9efa,
+    type: 3}
+  tunnelDiag_Right_Prefab: {fileID: 1667043461376800941, guid: e67c5aec89e59fd489265e8a26363baf,
+    type: 3}
+  rappelTunnelPrefab: {fileID: 3909117329096375416, guid: af8d619619a10c74ea0435457d856f16,
+    type: 3}
+  elasticTunnelPrefab: {fileID: 8182275761450547315, guid: 400c9e1d486993844a9335c71128f95d,
+    type: 3}
+  webTunnelCap_Prefab: {fileID: 9042976938833359311, guid: e97f2de10a6e1264080f00484241d18c,
+    type: 3}
+  fallingPathHexPrefab: {fileID: 9128236841162724159, guid: 4fc74e14149182d4f883f782db5cf4e9,
+    type: 3}
+  hugeWallPrefab: {fileID: 1965483175303689090, guid: c856fab2edfe86e409c94320881fd88b,
+    type: 3}
+  m_spiderScape: {fileID: 1879651345584456045, guid: 38c4f4f9b47500b40a31fcea44823fd1,
+    type: 3}
+  m_spiderEgg: {fileID: 380798681040633504, guid: f2bab82a8c21a3f49abdda618f04dd77,
+    type: 3}
+  m_rock: {fileID: 401191388999079345, guid: a4c1f69d051e5ed4dad26812f5881896, type: 3}
+  m_deadGoblin: {fileID: 7876639608102218640, guid: b38ae802411a1df43bfaa8847da5569d,
+    type: 3}
+  m_boxLoot: {fileID: 5251719320555895140, guid: a61b098e04161384e82aad1d5ea06bde,
+    type: 3}
+  m_khandaggug: {fileID: 1607729420610637494, guid: 85aa2b21d52cecc43beb7399c847bc9e,
+    type: 3}
+  tunnelBlock_Prefab: {fileID: 4129962430782367117, guid: 68e1063e04bbc0446b0ea25c30c7ae9e,
+    type: 3}
+  listenerTunnelBlock_Prefab: {fileID: 4129962430782367117, guid: bc7b1061d7839644fad6d9a814ae464c,
+    type: 3}
+  lastCaveObstaclePrefab: {fileID: 801453667890056699, guid: 528799de4040fe94a8a31b08b97b937a,
+    type: 3}
+  destroyedTunnelerPrefab: {fileID: 314616211714158216, guid: 954328b9eb788b943a7342f612be203d,
+    type: 3}
+  m_destructiblePlant: {fileID: 4833475911516775913, guid: e0bf715a3db098d43ba26767aef64b19,
+    type: 3}
+  m_arakaggListener: {fileID: 3494046227076548446, guid: 7b81222e7caf85847be7e537e5326278,
+    type: 3}
+  m_arakaggSpawner: {fileID: 3494046227076548446, guid: db5503dbacc4e6946be465f3087c2d30,
+    type: 3}
+  m_trap: {fileID: 3393372958403449809, guid: a09a89754c8e26b44aafe4ca870d7243, type: 3}
+  m_trap_web: {fileID: 6129748593673916339, guid: 3a6dc0eecfbc53c43bbe06bb7625d920,
+    type: 3}
+  m_ygz: {fileID: 2448973535419724492, guid: 32ad32b352e23904ead6d9ea542c049a, type: 3}
+  gemPrefabs:
+  - {fileID: 4902798788693075244, guid: 1c4e2eddf38f42b4e904a7492dc64fcd, type: 3}
+  - {fileID: 4902798788693075244, guid: 6a8ca414ab90c19458aa7c66872ea230, type: 3}
+  - {fileID: 4902798788693075244, guid: 0c46e0eaca3c7cc4bb88c327b2e7390d, type: 3}
+  - {fileID: 4902798788693075244, guid: 1dc0e0d32571e164b90a665e67554b2f, type: 3}
+  - {fileID: 4902798788693075244, guid: 9be43bc24f45be545b6099702ec3d074, type: 3}
+  m_motorRepair: {fileID: 5679533727700016813, guid: 16fc582e3ae337a43b41965b852172ce,
+    type: 3}
+  arakaggPrefab: {fileID: 6083400110485215306, guid: decfad6a1b818e147ae2f3b99d468953,
+    type: 3}
+  spitterPrefab: {fileID: 6083400110485215306, guid: 235623eb07110dc45a1156b302dd91cc,
+    type: 3}
+  weaverPrefab: {fileID: 6083400110485215306, guid: e947314c11032ec47b25080e1cdf68f3,
+    type: 3}
+  rocks_walkable:
+  - {fileID: 852400030, guid: 210cb78425845ac489969ea029610495, type: 3}
+  - {fileID: 9146149471948845597, guid: 5f728d67ea25c9647851e073a4a6dcae, type: 3}
+  - {fileID: 3125092020378528717, guid: 15549cd1238e6564cbe4ca0716342e86, type: 3}
+  - {fileID: 4812329263134605248, guid: bf9ce8b42669c3f4ea27467a34a975b5, type: 3}
+  - {fileID: 1025320544479723758, guid: 4b57310d2764747428410d8fa8735062, type: 3}
+  ygzHint: {fileID: 7573566548695480524, guid: 4db0a495b20124f4e8fda8ea68301aa9, type: 3}
+  gemHint: {fileID: 7573566548695480524, guid: 10a5819756127254b94e73e93c232223, type: 3}
+  rappelHint: {fileID: 2818885291429426200, guid: b41398c4d699383448fe0d5cecbe42a0,
+    type: 3}
+  eggHint: {fileID: 8398326145144585230, guid: d9974aa86b9b2fd46bc575c5b43a3cc4, type: 3}
+  spawnerHint: {fileID: 2135510149576617072, guid: 52c1ab461d7a2084fb7a5cd4f9f44d8a,
+    type: 3}
+  arakaggTunnelHint: {fileID: 6316064825104435816, guid: 586e5f7cf6160154abf19e2f1e111864,
+    type: 3}
+  tunnelHint: {fileID: 263272889, guid: 693e111088014304b9756481080c53bd, type: 3}
+  lootableCorpseHint: {fileID: 8137457873622869474, guid: 99ae136023859674c8f359536e304346,
+    type: 3}
+  arakaggListenersList: []
+  impossibleFloor: 0
