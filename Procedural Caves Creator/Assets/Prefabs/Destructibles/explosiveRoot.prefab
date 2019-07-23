@@ -1,35 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &30201587064894645
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3245926863725805927}
-  m_Layer: 13
-  m_Name: ExplosionParent
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3245926863725805927
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 30201587064894645}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.1, z: -0.16}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 3259655962235430707}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4833475911516775913
 GameObject:
   m_ObjectHideFlags: 0
@@ -39,9 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3259655962235430707}
-  - component: {fileID: 4143912304117338079}
-  - component: {fileID: 4195893494290662566}
-  - component: {fileID: 1246206768203078496}
   m_Layer: 13
   m_Name: explosiveRoot
   m_TagString: Destructible
@@ -61,81 +28,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8683088936708604492}
-  - {fileID: 3245926863725805927}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4143912304117338079
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4833475911516775913}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef0ac65bcf8793a448137faaf5c7d5af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  healthComponent: {fileID: 4195893494290662566}
-  mainMesh: {fileID: 8683088936706310316}
-  mainMeshSkinned: {fileID: 0}
-  originalMaterial: {fileID: 2100000, guid: 64825b8d7a8fe854192e1de0f0734f9d, type: 2}
-  damagedMaterial: {fileID: 2100000, guid: 7796a5ad40e601b408c75c6ffe258267, type: 2}
-  speedMultiplier: 1
-  onWebs: 0
-  doYouBleed: 0
-  bloodEffectPrefab: {fileID: 0}
-  bloodDecalPrefab: {fileID: 0}
-  fireParticlesPrefab: {fileID: 1947871717301538, guid: a990e3ac1318b834488c784d851f42a9,
-    type: 3}
-  fireParticlesLocalScale: 1
-  poisonParticlesPrefab: {fileID: 0}
-  poisonParticlesLocalScale: 1
-  gem: 5
-  hp: 10
-  ID: 4
-  explosion: {fileID: 5106364796177779104, guid: 587df96670e803b489f1d4a302628643,
-    type: 3}
-  explosionOrigin: {fileID: 3245926863725805927}
-  destroy:
-  - {fileID: 8300000, guid: b8adfc11129ca574dab67f443b1f9d70, type: 3}
-  - {fileID: 8300000, guid: 443fe53afaffe2f41a461afc4677fbf7, type: 3}
-  destroySoundObject: {fileID: 4676281670146947306, guid: 9bb828ac8bd59c04b94ade2a733e2024,
-    type: 3}
---- !u!114 &4195893494290662566
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4833475911516775913}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 688d84ca4c8bf56499f6c4b8b7acf021, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  owner: {fileID: 4143912304117338079}
-  maxHealth: 0
-  health: 0
-  afflictionImmunities: 
-  damageImmunities: 
-  afflicted: 0
-  dead: 0
---- !u!136 &1246206768203078496
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4833475911516775913}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 1.08
-  m_Height: 3.52
-  m_Direction: 1
-  m_Center: {x: 0, y: 1.25, z: 0}
 --- !u!1001 &8683088936708479180
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -143,6 +38,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3259655962235430707}
     m_Modifications:
+    - target: {fileID: 100000, guid: 997738bb8d3c71a41afc7cd0a50631ba, type: 3}
+      propertyPath: m_Name
+      value: Flower_MPP
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 997738bb8d3c71a41afc7cd0a50631ba, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 997738bb8d3c71a41afc7cd0a50631ba, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.19
@@ -199,25 +102,11 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 75
       objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 997738bb8d3c71a41afc7cd0a50631ba, type: 3}
-      propertyPath: m_Name
-      value: Flower_MPP
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 997738bb8d3c71a41afc7cd0a50631ba, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 997738bb8d3c71a41afc7cd0a50631ba, type: 3}
 --- !u!4 &8683088936708604492 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 997738bb8d3c71a41afc7cd0a50631ba,
-    type: 3}
-  m_PrefabInstance: {fileID: 8683088936708479180}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &8683088936706310316 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 2300000, guid: 997738bb8d3c71a41afc7cd0a50631ba,
     type: 3}
   m_PrefabInstance: {fileID: 8683088936708479180}
   m_PrefabAsset: {fileID: 0}

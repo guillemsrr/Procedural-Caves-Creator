@@ -36,7 +36,6 @@ public class SimpleHexLevel : MonoBehaviour
     [SerializeField] private GameObject tunnelDiag_Right_Prefab;
     [Header("Other")]
     [SerializeField] private GameObject rappelTunnelPrefab;
-    [SerializeField] private GameObject elasticTunnelPrefab;
     [SerializeField] private GameObject webTunnelCap_Prefab;
 
     [Header("ExtraCave Prefabs")]
@@ -44,58 +43,23 @@ public class SimpleHexLevel : MonoBehaviour
     [SerializeField] private GameObject hugeWallPrefab;
     
     [Header("Game Elements")]
-    [SerializeField] private GameObject m_spiderScape;
-    [SerializeField] private GameObject m_spiderEgg;
     [SerializeField] private GameObject m_rock;
-    [SerializeField] private GameObject m_deadGoblin;
-    [SerializeField] private GameObject m_boxLoot;
-    [SerializeField] private GameObject m_khandaggug;
     [SerializeField] private GameObject tunnelBlock_Prefab;
     [SerializeField] private GameObject listenerTunnelBlock_Prefab;
     [SerializeField] private GameObject lastCaveObstaclePrefab;
-    [SerializeField] private GameObject destroyedTunnelerPrefab;
     [SerializeField] private GameObject m_destructiblePlant;
     [SerializeField] private GameObject m_arakaggListener;
-    [SerializeField] private GameObject m_arakaggSpawner;
-    [SerializeField] private GameObject m_trap;
-    [SerializeField] private GameObject m_trap_web;
     [Header("Gems")]
     [SerializeField] private GameObject m_ygz;
-    public GameObject[] gemPrefabs = new GameObject[5];
-    [Header("Repair")]
-    public GameObject m_motorRepair;
-    [Header("Enemy Prefabs")]
-    [SerializeField] private GameObject arakaggPrefab;
-    [SerializeField] private GameObject spitterPrefab;
-    [SerializeField] private GameObject weaverPrefab;
+
     [Header("Rocks")]
     [SerializeField] private GameObject[] rocks_walkable;
-
-    //for the hints:
-    [Header("Hints")]
-    private int levelNum;
-    [SerializeField] private GameObject ygzHint;
-    [SerializeField] private GameObject gemHint;
-    [SerializeField] private GameObject rappelHint;
-    [SerializeField] private GameObject eggHint;
-    [SerializeField] private GameObject spawnerHint;
-    [SerializeField] private GameObject arakaggTunnelHint;
-    [SerializeField] private GameObject tunnelHint;
-    [SerializeField] private GameObject lootableCorpseHint;
-    //game elements lists:
-    private List<GameObject> ygzHintList;
-    private List<GameObject> gemHintList;
-    private List<GameObject> rappelsHintList;
-    private List<GameObject> eggsHintList;
-    private List<GameObject> spawnersHintList;
-    private List<GameObject> arakaggTunnelHintList;
-    private List<GameObject> tunnelsHintList;
-    private List<GameObject> lootableCorpsesHintList;
 
     #endregion
 
     #region Variables
 
+    private int levelNum;
     private int maxRange;
     private List<GameObject> cavesList;
     private int numNodes;
@@ -103,9 +67,7 @@ public class SimpleHexLevel : MonoBehaviour
     private int hexConnectionNum;
     private int numNextHexs;
     public Graph m_graph { get; private set; }
-    private GameObject m_player;
     private bool lastFloor;
-    private bool createObstacle;
     private List<GameObject> nextFloorHexs;
     private List<GameObject> upConnectionHexs;
     private bool upDownPlatformerInstantiated;
@@ -121,20 +83,15 @@ public class SimpleHexLevel : MonoBehaviour
     private int rejectionLimit = 30;
 
     private int baseArakaggListenerPercentage = 5;
-    private int maxArakaggListeners;
     private float arakaggListenersNodesRelationPercentage = 0.2f;
-
-    private int randomLoot = 75;
-
     public bool impossibleFloor = false;
 
     #endregion
 
     #region Floor
 
-    public void CreateFloor(List<GameObject> init, int MIN_NODES, int MAX_NODES, int range, int MIN_NEXTHEX, int MAX_NEXTHEX, bool isLast = false, bool _createObstacle = false, int level = 0)
+    public void CreateFloor(List<GameObject> init, int MIN_NODES, int MAX_NODES, int MIN_NEXTHEX, int MAX_NEXTHEX, bool isLast = false, int level = 0)
     {
-        maxRange = range;
         numNodes = Random.Range(MIN_NODES, MAX_NODES);
         numNextHexs = Random.Range(MIN_NEXTHEX, MAX_NEXTHEX);
         SetRange();
@@ -142,7 +99,6 @@ public class SimpleHexLevel : MonoBehaviour
         nodeNum = -1;
         hexConnectionNum = 0;
         lastFloor = isLast;
-        createObstacle = _createObstacle;
         levelNum = level;
 
         upDownPlatformerInstantiated = false;
@@ -151,18 +107,6 @@ public class SimpleHexLevel : MonoBehaviour
         upConnectionHexs = new List<GameObject>();
         tunnelBlocks = new List<GameObject>();
         pathHexList = new List<GameObject>();
-
-        if (levelNum > 0 && levelNum <=3)
-        {
-            ygzHintList = new List<GameObject>();
-            rappelsHintList = new List<GameObject>();
-            eggsHintList = new List<GameObject>();
-            spawnersHintList = new List<GameObject>();
-            arakaggTunnelHintList = new List<GameObject>();
-            tunnelsHintList = new List<GameObject>();
-            lootableCorpsesHintList = new List<GameObject>();
-            gemHintList = new List<GameObject>();
-        }
 
         foreach (GameObject hex in init)
         {
@@ -197,11 +141,8 @@ public class SimpleHexLevel : MonoBehaviour
     {
         for (int i = nodeNum; i < numNodes; i++)
         {
-            if(createObstacle)
-            {
-                if (lastFloor && !spawnedLastCave)
-                    CreateLastCave();//provisional, necessito fer-ho des de Graph per poder guardar la dada de lastCave
-            }
+            if (lastFloor && !spawnedLastCave)
+                CreateLastCave();//provisional, necessito fer-ho des de Graph per poder guardar la dada de lastCave
 
             //get new position
             Vector3 pos = RandomCavePosition();
@@ -646,19 +587,6 @@ public class SimpleHexLevel : MonoBehaviour
                 if (edge.isBlocked)
                 {
                     CreateForwardTunnelBlockers(edge);
-
-                    //TUNNEL HINTS
-                    if (levelNum == 2)
-                    {
-                        GameObject hint;
-                        Transform f = edge.face1;
-                        hint = Instantiate(tunnelHint, f.position, Quaternion.identity);
-                        tunnelsHintList.Add(hint);
-
-                        f = edge.face2;
-                        hint = Instantiate(tunnelHint, f.position, Quaternion.identity);
-                        tunnelsHintList.Add(hint);
-                    }
                 }
             }
             else //diagonal
@@ -842,11 +770,6 @@ public class SimpleHexLevel : MonoBehaviour
                 GameObject tunnelPart = Instantiate(tunnel_mid_vertical, hex.transform.position - new Vector3 (0, -25 - Graph.rDist + 0.1f, 0), Quaternion.Euler(0,0,-90), hex.transform);
                 tunnelPart.transform.position -= new Vector3(0, 0, Graph.rDist/4);
                 tunnelPart.name = "Vertical Tunnel Trap";
-
-                //Create trap:
-                //it should be on the the upper hex parent
-                Instantiate(m_trap, hex.transform.position - new Vector3(0, -24.99f, 0), Quaternion.identity, hex.transform);
-                Instantiate(m_trap_web, hex.transform.position - new Vector3(0, -25, 0), Quaternion.identity, hex.transform);
             }
             else if(hex.name.Contains("UpDown"))
             {
@@ -857,12 +780,6 @@ public class SimpleHexLevel : MonoBehaviour
                 //Create Rappels:
                 GameObject rappel = Instantiate(rappelTunnelPrefab, hex.transform.position - new Vector3(0, -25, 0), Quaternion.identity, upConnectionHexs[i].transform);
                 rappel.name = "Rappel goes down";
-
-                if (levelNum == 1)
-                {
-                    GameObject hint = Instantiate(rappelHint, rappel.transform.position, Quaternion.identity, rappel.transform);
-                    rappelsHintList.Add(hint);
-                }
 
                 rappel = Instantiate(rappelTunnelPrefab, hex.transform.position, Quaternion.identity, hex.transform);
                 rappel.name = "Rappel goes up";
@@ -956,8 +873,6 @@ public class SimpleHexLevel : MonoBehaviour
     {
         propsPositions = new List<Vector3>();
 
-        maxArakaggListeners = (int) (numNodes * arakaggListenersNodesRelationPercentage);
-
         foreach (Graph.Node n in m_graph.nodeList)
         {
             int counter = 0; // to make sure some element is limited inside the cave
@@ -977,12 +892,8 @@ public class SimpleHexLevel : MonoBehaviour
                         {
                             hex.name += " start neighbor";
 
-                            GameObject spawner = CreatePropGO(m_arakaggSpawner, hex, propsPositions, 1f, 7f, faceCenter: true, percentage: 25, closeToFace: true);                            
-
                             CreateProp(m_ygz, n, hex, 15, 3, propsPositions);
                             CreateProp(m_rock, n , hex, 25, 10, propsPositions, 0f, 4);
-                            CreateProp(m_spiderEgg, n , hex, 30, 3, propsPositions);
-                            CreateProp(m_boxLoot, n, hex, 40, 1, propsPositions);
                             CreateArakaggListener(hex, 10);
                         }
                     }
@@ -994,21 +905,14 @@ public class SimpleHexLevel : MonoBehaviour
                         {
                             CreateProp(m_ygz, n , hex, 15, 2, propsPositions, minRad:5);
                             CreateProp(m_rock, n , hex, 25, 10, propsPositions, minRad: 2);
-                            CreateProp(m_spiderEgg, n , hex, 30, 3, propsPositions, minRad:5);
-                            CreateProp(m_boxLoot, n, hex, 20, 1, propsPositions, minRad: 5);
-
                         }
                         else
                         {
                             hex.name += " connection neighbor";
 
-                            GameObject spawner = CreatePropGO(m_arakaggSpawner, hex, propsPositions, 1.5f, 7f, faceCenter: true, percentage: 15, closeToFace: true);
-
                             CreateProp(m_ygz, n , hex, 25, 3, propsPositions);
                             CreateProp(m_rock, n , hex, 25, 10, propsPositions, minRad: 2);
-                            CreateProp(m_spiderEgg, n , hex, 30, 3, propsPositions);
                             CreateProp(m_destructiblePlant, n , hex, 35, 2, propsPositions);
-                            CreateProp(m_boxLoot, n, hex, 30, 1, propsPositions);
 
                             CreateArakaggListener(hex);
                         }
@@ -1022,20 +926,14 @@ public class SimpleHexLevel : MonoBehaviour
                             hex.name += " trap";
                             CreateProp(m_ygz, n , hex, 15, 3, propsPositions, minRad: 5);
                             CreateProp(m_rock, n , hex, 25, 3, propsPositions, minRad: 2);
-                            CreateProp(m_spiderEgg, n , hex, 30, 3, propsPositions, minRad: 5);
-                            CreateProp(m_boxLoot, n, hex, 30, 2, propsPositions, minRad: 5);
                         }
                         else
                         {
                             hex.name += " trap neighbor";
 
-                            GameObject spawner = CreatePropGO(m_arakaggSpawner, hex, propsPositions, 1.5f, 7f, faceCenter: true, percentage: 15, closeToFace: true);
-
                             CreateProp(m_ygz, n , hex, 25, 5, propsPositions);
                             CreateProp(m_rock, n , hex, 25, 10, propsPositions, minRad:2);
-                            CreateProp(m_spiderEgg, n , hex, 30, 3, propsPositions);
                             CreateProp(m_destructiblePlant, n , hex, 35, 2, propsPositions);
-                            CreateProp(m_boxLoot, n, hex, 40, 1, propsPositions);
 
                             CreateArakaggListener(hex);
                         }
@@ -1046,12 +944,8 @@ public class SimpleHexLevel : MonoBehaviour
                     {
                         hex.name += " rocky";
 
-                        GameObject spawner = CreatePropGO(m_arakaggSpawner, hex, propsPositions, 1.5f, 7f, faceCenter: true, percentage: 15, closeToFace: true);
-
                         CreateProp(m_ygz, n , hex, 10, 2, propsPositions);
                         CreateProp(m_rock, n , hex, 70, 6, propsPositions);
-                        CreateProp(m_spiderEgg, n , hex, 10, 3, propsPositions);
-                        CreateProp(m_boxLoot, n, hex, 40, 2, propsPositions);
 
                         CreateArakaggListener(hex, 10);
                     }
@@ -1061,13 +955,9 @@ public class SimpleHexLevel : MonoBehaviour
                     {
                         hex.name += " normal";
 
-                        GameObject spawner = CreatePropGO(m_arakaggSpawner, hex, propsPositions, 1.5f, 7f, faceCenter: true, percentage: 25, closeToFace: true);
-
                         CreateProp(m_ygz, n , hex, 25, 2, propsPositions);
                         CreateProp(m_rock, n , hex, 25, 5, propsPositions, minRad:2);
-                        CreateProp(m_spiderEgg, n , hex, 25, 5, propsPositions);
                         CreateProp(m_destructiblePlant, n , hex, 25, 3, propsPositions);
-                        CreateProp(m_boxLoot, n, hex, 40, 2, propsPositions);
 
                         CreateArakaggListener(hex);
                     }
@@ -1077,10 +967,8 @@ public class SimpleHexLevel : MonoBehaviour
                     {
                         hex.name += " ygz mine";
                         CreateProp(m_rock, n , hex, 25, 2, propsPositions, minRad:2);
-                        CreateProp(m_spiderEgg, n , hex, 25, 3, propsPositions);
                         CreateProp(m_destructiblePlant, n , hex, 35, 1, propsPositions);
                         CreateProp(m_ygz, n , hex, 75, 5, propsPositions);
-                        CreateProp(m_boxLoot, n, hex, 45, 3, propsPositions);
 
                         CreateArakaggListener(hex);
                     }
@@ -1091,8 +979,6 @@ public class SimpleHexLevel : MonoBehaviour
                         hex.name += " arakagg nest";
 
                         CreateProp(m_rock, n , hex, 25, 5, propsPositions, minRad:2);
-                        CreateProp(m_spiderEgg, n , hex, 80, 15, propsPositions);
-                        CreateProp(m_boxLoot, n, hex, 60, 5, propsPositions);
 
                         CreateArakaggListener(hex);
                     }
@@ -1102,13 +988,10 @@ public class SimpleHexLevel : MonoBehaviour
                     {
                         hex.name += " arakagg spawner";
 
-                        GameObject spawner = CreatePropGO(m_arakaggSpawner, hex, propsPositions, 2f, 7f, faceCenter: true, closeToFace: true);
                         counter++;
 
                         CreateProp(m_ygz, n , hex, 25, 2, propsPositions);
                         CreateProp(m_rock, n , hex, 25, 5, propsPositions, minRad:2);
-                        CreateProp(m_spiderEgg, n , hex, 25, 5, propsPositions);
-                        CreateProp(m_boxLoot, n, hex, 40, 3, propsPositions);
 
                         CreateArakaggListener(hex);
                     }
@@ -1118,13 +1001,9 @@ public class SimpleHexLevel : MonoBehaviour
                     {
                         hex.name += " exploding plants";
 
-                        GameObject spawner = CreatePropGO(m_arakaggSpawner, hex, propsPositions, 1.5f, 7f, faceCenter: true, percentage: 15, closeToFace: true);
-
                         CreateProp(m_ygz, n , hex, 25, 2, propsPositions);
                         CreateProp(m_rock, n , hex, 25, 5, propsPositions, minRad:2);
-                        CreateProp(m_spiderEgg, n , hex, 25, 2, propsPositions);
                         CreateProp(m_destructiblePlant, n , hex, 35, 10, propsPositions);
-                        CreateProp(m_boxLoot, n, hex, 35, 2, propsPositions);
 
                         CreateArakaggListener(hex);
                     }
@@ -1136,24 +1015,16 @@ public class SimpleHexLevel : MonoBehaviour
                         {
                             CreateProp(m_ygz, n , hex, 15, 3, propsPositions, minRad:5);
                             CreateProp(m_rock, n , hex, 25, 5, propsPositions, minRad:4);
-                            CreateProp(m_spiderEgg, n , hex, 30, 3, propsPositions, minRad: 5);
-                            CreateProp(m_boxLoot, n, hex, 30, 2, propsPositions, minRad: 5);
 
                         }
                         else if (hex.name.Contains("Trap Up"))
                         {
                             CreateProp(m_ygz, n , hex, 15, 3, propsPositions, 0.2f, 5);
                             CreateProp(m_rock, n , hex, 25, 3, propsPositions, 0f, 4);
-                            CreateProp(m_spiderEgg, n , hex, 30, 3, propsPositions, 0.2f, 5);
-                            CreateProp(m_boxLoot, n, hex, 30, 2, propsPositions, minRad: 5);
-                            
                         }
                         else if (hex.name.Contains("Trap Down"))
                         {
                             CreateProp(m_rock, n , hex, 25, 2, propsPositions, 0f, 2);
-                            CreateProp(m_spiderEgg, n , hex, 80, 30, propsPositions, 0.5f);
-                            CreateProp(m_boxLoot, n, hex, 35, 2, propsPositions);
-
                         }
                         else if (hex.name.Contains("START"))
                         {
@@ -1167,11 +1038,8 @@ public class SimpleHexLevel : MonoBehaviour
                         {
                             hex.name += " normal combined neighbor";
 
-                            GameObject spawner = CreatePropGO(m_arakaggSpawner, hex, propsPositions, 1.5f, 7f, faceCenter: true, percentage: 20, closeToFace: true);
-                            CreateProp(m_spiderEgg, n , hex, 25, 5, propsPositions);
                             CreateProp(m_ygz, n , hex, 25, 2, propsPositions);
                             CreateProp(m_rock, n , hex, 25, 5, propsPositions, minRad: 2);
-                            CreateProp(m_boxLoot, n, hex, 40, 3, propsPositions);
 
                             CreateArakaggListener(hex);
                         }
@@ -1182,46 +1050,33 @@ public class SimpleHexLevel : MonoBehaviour
             }
         }
 
-        if(createObstacle)
+        foreach (Graph.Node n in m_graph.nodeList)
         {
-            foreach (Graph.Node n in m_graph.nodeList)
+            switch (n.m_type)
             {
-                switch (n.m_type)
-                {
-                    case Graph.CaveType.GOAL:
-                        foreach (Transform hex in n.hexsList)
+                case Graph.CaveType.GOAL:
+                    foreach (Transform hex in n.hexsList)
+                    {
+                        if (hex.name.Contains("GOAL"))
                         {
-                            if (hex.name.Contains("GOAL"))
-                            {
-                                Instantiate(lastCaveObstaclePrefab, hex.transform.position + new Vector3(0, 4f, 0), Quaternion.identity, hex.transform);
-                            }
-                            else
-                            {
-                                hex.name += " goal neighbor";
-
-                                GameObject spawner = CreatePropGO(m_arakaggSpawner, hex, propsPositions, 1f, 7f, faceCenter: true, percentage: 35, closeToFace: true);
-
-                                CreateProp(m_ygz, n, hex, 10, 2, propsPositions, minRad: 4);
-                                CreateProp(m_rock, n, hex, 25, 10, propsPositions, minRad: 4);
-                                CreateProp(m_spiderEgg, n, hex, 30, 3, propsPositions);
-                                //CreateProp(m_spiderScape, n , hex, 10, 1, propsPositions);
-                                CreateProp(m_destructiblePlant, n, hex, 35, 3, propsPositions);
-                                CreateProp(m_deadGoblin, n, hex, 20, 1, propsPositions);
-                            }
+                            Instantiate(lastCaveObstaclePrefab, hex.transform.position + new Vector3(0, 4f, 0), Quaternion.identity, hex.transform);
                         }
-                        break;
-                }
+                        else
+                        {
+                            hex.name += " goal neighbor";
+
+                            CreateProp(m_ygz, n, hex, 10, 2, propsPositions, minRad: 4);
+                            CreateProp(m_rock, n, hex, 25, 10, propsPositions, minRad: 4);
+                            CreateProp(m_destructiblePlant, n, hex, 35, 3, propsPositions);
+                        }
+                    }
+                    break;
             }
         }
     }
 
     private void CreateProp(GameObject prop, Graph.Node node, Transform hex, int percentage, int max, List<Vector3> propsPositions, float minDist = 0f, float minRad = 0f, float maxRad = 8f, float height = 0f, bool faceCenter = false)
     {
-        if(prop == m_boxLoot)
-        {
-            //return;
-        }
-
         if (height == 0f)
             height = GetPropHeight(prop);
 
@@ -1281,89 +1136,10 @@ public class SimpleHexLevel : MonoBehaviour
                 }
                
                 GameObject p = Instantiate(prop, pos + hex.position, rot, hex.transform);
-                SpecificPropActions(prop, node, p);
-                PropHint(p);
             }
         }
     }
 
-    private void SpecificPropActions(GameObject prop, Graph.Node node, GameObject actualProp)
-    {
-        if (prop.name.Contains("Egg"))
-        {
-            //prop.GetComponent<Script_ArakaggEgg>().SetCave(node);
-        }
-        else if (prop.name.Contains("Box"))
-        {
-            if (node != null)
-            {
-                if (node.m_type == Graph.CaveType.ARAKAGG_NEST)
-                {
-                    if (Random.Range(0, 100) < randomLoot + 15)
-                    {
-                        GameObject newProp = Instantiate(m_deadGoblin, actualProp.transform.position, actualProp.transform.rotation, actualProp.transform.parent);
-                        DestroyImmediate(actualProp);
-                        //prop = newProp;
-                    }
-                }
-                else
-                {
-                    if (Random.Range(0, 100) > randomLoot)
-                    {
-                        GameObject newProp = Instantiate(m_deadGoblin, actualProp.transform.position, actualProp.transform.rotation, actualProp.transform.parent);
-                        DestroyImmediate(actualProp);
-                        //prop = newProp;
-                    }
-                }
-            }
-        }
-    }
-
-    private void PropHint(GameObject prop)
-    {
-        if (!prop)
-        {
-            return;
-        }
-
-        GameObject hint;
-        if (levelNum == 1)
-        {
-            if (prop.name.Contains("ygz") || prop.name.Contains("Ygz"))
-            {
-                hint = Instantiate(ygzHint, prop.transform.position, Quaternion.identity);
-                ygzHintList.Add(hint);
-            }
-            else if (prop.name.Contains("gem") || prop.name.Contains("Gem"))
-            {
-                hint = Instantiate(gemHint, prop.transform.position, Quaternion.identity);
-                gemHintList.Add(hint);
-            }
-        }
-        if (levelNum == 2)
-        {
-            if (prop.name.Contains("egg") || prop.name.Contains("Egg"))
-            {
-                hint = Instantiate(eggHint, prop.transform.position, Quaternion.identity);
-                eggsHintList.Add(hint);
-            }
-            else if (prop.name.Contains("spawner") || prop.name.Contains("Spawner"))
-            {
-                hint = Instantiate(spawnerHint, prop.transform.position, Quaternion.identity);
-                spawnersHintList.Add(hint);
-            }
-            else if (prop.name.Contains("listener") || prop.name.Contains("Listener"))
-            {
-                hint = Instantiate(arakaggTunnelHint, prop.transform.position, Quaternion.identity);
-                arakaggTunnelHintList.Add(hint);
-            }
-            else if (prop.name.Contains("loot") || prop.name.Contains("Loot"))
-            {
-                hint = Instantiate(lootableCorpseHint, prop.transform.position, Quaternion.identity);
-                lootableCorpsesHintList.Add(hint);
-            }
-        }
-    }
 
 
     private GameObject CreatePropGO(GameObject prop, Transform hex, List<Vector3> propsPositions, float minDist = 2.5f, float minRad = 0f, float maxRad = 9f, float height = 0f, bool faceCenter = false, int percentage = 100, bool closeToFace = false)
@@ -1402,7 +1178,6 @@ public class SimpleHexLevel : MonoBehaviour
             }
 
             GameObject p = Instantiate(prop, pos + hex.position, rot, hex.transform);
-            PropHint(p);
             return p;
         }
 
@@ -1413,14 +1188,8 @@ public class SimpleHexLevel : MonoBehaviour
     {
         if (prop == m_rock)
             return -0.1f;
-        else if (prop == m_spiderEgg)
-            return 0.0f;
-        else if (prop == m_spiderScape)
-            return 0.2f;
         else if (prop == m_ygz)
             return 0.9f;
-        else if (prop == m_deadGoblin)
-            return 0.5f;
         else
             return 0.0f;
     }
@@ -1429,14 +1198,8 @@ public class SimpleHexLevel : MonoBehaviour
     {
         if (prop == m_rock)
             return 2.5f;
-        else if (prop == m_spiderEgg)
-            return 1f;
-        else if (prop == m_spiderScape)
-            return 0.5f;
         else if (prop == m_ygz)
             return 0.7f;
-        else if (prop == m_deadGoblin)
-            return 0.5f;
         else if (prop == m_destructiblePlant)
             return 1.75f;
         else
@@ -1744,43 +1507,6 @@ public class SimpleHexLevel : MonoBehaviour
         }
 
         return pos;
-    }
-
-    public void RemoveFloorGameElementHints(GameObject hint)
-    {
-        //Debug.Log("name: " + hint.name);
-        if (hint.name.Contains("ygz"))
-        {
-            RemoveListElements(ygzHintList);
-        }
-        else if (hint.name.Contains("gem"))
-        {
-            RemoveListElements(gemHintList);
-        }
-        else if (hint.name.Contains("egg"))
-        {
-            RemoveListElements(eggsHintList);
-        }
-        else if (hint.name.Contains("spawner"))
-        {
-            RemoveListElements(spawnersHintList);
-        }
-        else if (hint.name.Contains("arakagg"))
-        {
-            RemoveListElements(arakaggTunnelHintList);
-        }
-        else if (hint.name.Contains("tunnel"))
-        {
-            RemoveListElements(tunnelsHintList);
-        }
-        else if (hint.name.Contains("rappel"))
-        {
-            RemoveListElements(rappelsHintList);
-        }
-        else if (hint.name.Contains("corpse"))
-        {
-            RemoveListElements(lootableCorpsesHintList);
-        }
     }
 
     private void RemoveListElements(List<GameObject> list)
@@ -2317,20 +2043,6 @@ public class SimpleHexLevel : MonoBehaviour
         //place the recompensation:
         hex = hexsList[Random.Range(0, hexsList.Count - 1)];
         Vector3 pos1 = hex.transform.position + new Vector3(0,8.19f, 0);
-        Instantiate(destroyedTunnelerPrefab, pos1, destroyedTunnelerPrefab.transform.rotation, hex.transform);
-        //hex.GetComponent<Mesh>().
-
-        List<Vector3> propsPos = new List<Vector3>();
-        //place spawners:
-        foreach(GameObject hexx in hexsList)
-        {
-            if (Random.Range(0, 100) < 70)
-            {
-                CreatePropGO(m_arakaggSpawner, hexx.transform, propsPos, 1f, 7f, faceCenter: true, closeToFace: true);
-            }
-
-            CreateProp(m_boxLoot, null, hexx.transform, 50, 4, propsPos, minRad: 5);
-        }
     }
 
     #endregion
