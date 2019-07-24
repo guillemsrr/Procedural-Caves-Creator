@@ -18,24 +18,17 @@ public class Graph: MonoBehaviour
     public static float rDist = RDist * Mathf.Sin(60f * Mathf.Deg2Rad);
     public static float diagDist = 7.500001f;
 
-    //Total Game Elements
-    private static int blockedTunnelsBasePercentage = 15;
-    private static int listenerTunnelsBasePercentage = 10;
-    private static int maxBlockedTunnelPercentage = 85;
-    private static int maxListenerTunnelPercentage = 65;
+    private GameObject help;
+
 
     public enum CaveType
     {
         ROCKY = 1,
         NORMAL = 2, //a bit of everything (?)
-        YGZ_MINE = 3,
-        ARAKAGG_NEST = 4,
-        ARAKAGG_SPAWNER = 5,
-        EXPLODING_PLANTS = 6,
+        MINE = 3,
 
         //this ones are given
         START,
-        GOAL,
         UPDOWN_CONNECTION,
         TRAP,
         COMBINED,
@@ -185,14 +178,7 @@ public class Graph: MonoBehaviour
                         return CaveType.COMBINED;
                     else
                         return CaveType.START;
-                }
-                else if (hex.name.Contains("GOAL"))
-                {
-                    if (isFloorConnection)
-                        return CaveType.COMBINED;
-                    else
-                        return CaveType.GOAL;
-                }      
+                }    
             }
 
             //FLOOR CONNECTION
@@ -207,12 +193,7 @@ public class Graph: MonoBehaviour
                         type = CaveType.UPDOWN_CONNECTION;
                         numConnectedHexs++;
                     }
-                    else if (hex.name.Contains("Trap Down"))
-                    {
-                        type =  CaveType.ARAKAGG_NEST;
-                        numConnectedHexs++;
-                    }
-                    else if (hex.name.Contains("Trap Up"))
+                    else if (hex.name.Contains("Trap"))
                     {
                         type = CaveType.TRAP;
                         numConnectedHexs++;
@@ -230,33 +211,18 @@ public class Graph: MonoBehaviour
 
             if(mass > 2)//big cave
             {
-                if(LevelFloorsCreator.instance.level > 2)
+                if (mass > 4)//baixo la possibilitat en coves enormes, impossibles de superar.
                 {
-                    if(mass > 4)//baixo la possibilitat en coves enormes, impossibles de superar.
+                    if (Random.Range(0, 100) < 25)//coves enormes de Ygz
                     {
-                        if (Random.Range(0, 100) < 15)
-                        {
-                            int a = Random.Range(4, 7);
-
-                            return (CaveType)a;
-                        }
-                        else if (Random.Range(0, 100) < 5)//coves enormes de Ygz
-                        {
-                            return CaveType.YGZ_MINE;
-                        }
+                        return CaveType.MINE;
                     }
-                    else
+                }
+                else
+                {
+                    if (Random.Range(0, 100) < 15)//coves enormes de Ygz
                     {
-                        if (Random.Range(0, 100) < 60)//és més probable que surtin tipus hostils
-                        {
-                            int a = Random.Range(4, 7);
-
-                            return (CaveType)a;
-                        }
-                        else if (Random.Range(0, 100) < 5)//coves enormes de Ygz
-                        {
-                            return CaveType.YGZ_MINE;
-                        }
+                        return CaveType.MINE;
                     }
                 }
             }
@@ -264,16 +230,7 @@ public class Graph: MonoBehaviour
             {
                 if (Random.Range(0, 100) < 25)//25%
                 {
-                    return CaveType.YGZ_MINE;
-                }
-                else if (Random.Range(0, 100) < 50)//25%
-                {
-                    if (LevelFloorsCreator.instance.level > 1)
-                    {
-                        int a = Random.Range(4, 7);
-
-                        return (CaveType)a;
-                    }  
+                    return CaveType.MINE;
                 }
             }
 
@@ -294,8 +251,7 @@ public class Graph: MonoBehaviour
         public Transform face1;
         public Transform face2;
         public float weight { get; private set; }
-        public bool isBlocked;
-        public bool isListener;
+
         public GameObject mesh;
         public bool isForward;
         public float distance;
@@ -308,29 +264,6 @@ public class Graph: MonoBehaviour
             face2 = h2;
             weight = w;
             isForward = forward;
-
-            //blocked:
-            int blockPercentage = blockedTunnelsBasePercentage * LevelFloorsCreator.instance.level;
-            if(blockPercentage > maxBlockedTunnelPercentage)
-            {
-                blockPercentage = maxBlockedTunnelPercentage;
-            }
-            isBlocked = (Random.Range(0, 100) < blockPercentage);//this will be more complex in the future, using totalBlockedTunnelsPercentage and numEdges
-
-            //listener:
-            if (isBlocked)
-            {
-                int listenerPercentage = listenerTunnelsBasePercentage * LevelFloorsCreator.instance.level;
-                if (listenerPercentage > maxListenerTunnelPercentage)
-                {
-                    listenerPercentage = maxListenerTunnelPercentage;
-                }
-                isListener = (Random.Range(0, 100) < listenerPercentage);
-            }
-            else
-            {
-                isListener = false;
-            }
 
 
             mesh = null;
@@ -350,7 +283,7 @@ public class Graph: MonoBehaviour
         }
     }
 
-    public void CreateGraph(List<GameObject> cavesList, bool isLast = false)
+    public void CreateGraph(List<GameObject> cavesList, bool isLast = false, GameObject _help = null)
     {
         nodeList = new List<Node>();
         edgeList = new List<Edge>();
@@ -359,6 +292,8 @@ public class Graph: MonoBehaviour
         CreateNodes(cavesList);
         isLastFloor = isLast;
         connectedNodes = true; // it's only false when "hasPathBFS is false betwween both floor connections
+
+        help = _help;
     }
 
     private void CreateNodes(List<GameObject> cavesList)
@@ -716,52 +651,59 @@ public class Graph: MonoBehaviour
 
     private bool DetectTunnelObstruction(Edge edge)
     {
-        //Debug.Log("WWWW " + edge.weight);
         Vector3 dir = edge.face2.position - edge.face1.position;
         dir.Normalize();
         Vector3 pos = edge.face1.position;
 
-        //if (!edge.node1.m_mesh.transform.parent.transform.name.Contains("Level -1") || !edge.node1.m_mesh.name.Contains("Cave 2") || !edge.node1.hexsList[0].name.Contains("Hex 1"))
-        //{
-        //    return false;
-        //}
-
-        //Debug.Log("edge.distance: " + edge.distance);
-
-        if (!edge.isForward && edge.distance > diagDist)
+        if (edge.distance > rDist*2)
         {
-            pos += dir * diagDist*2;
-            //Instantiate(gggg, pos, Quaternion.identity);
+            pos += dir * rDist * 2;
 
             foreach (Node n in nodeList)
             {
                 if (n != edge.node1 && n != edge.node2)
                 {
+                    //Instantiate(help, pos, Quaternion.identity, transform);
                     foreach (Transform hex in n.hexsList)
                     {
-                        for (int i = 0; i <= edge.weight; i++)
+                        for (int i = 0; i <= edge.weight*4; i++)
                         {
-                            //if (Vector3.Distance(pos, hex.position) < 20)
-                            //{
-                            //    Debug.Log("dist: " + Vector3.Distance(pos, hex.position));
-                            //    Debug.Log("rDist: " + (rDist + 0.5f));
-                            //}
                             if (Vector3.Distance(pos, hex.position) < rDist + 0.5f)
                             {
-                                //Debug.Log(edge.node1.m_mesh.name + " " + edge.face1.parent.name + " to " + edge.node2.m_mesh.name + " " + edge.face2.parent.name);
                                 return true;
                             }
-                            pos += dir * diagDist * 2;
-                            //Instantiate(gggg, pos, Quaternion.identity);
+                            pos += dir * rDist/ 2;
+                            //Instantiate(help, pos, Quaternion.identity, transform);
                         }
                         pos = edge.face1.position;
                     }
                 }
+                else
+                {
+                    foreach (Transform hex in n.hexsList)
+                    {
+                        if (hex != edge.face1.parent && hex != edge.face2.parent)
+                        {
+                            //Instantiate(help, pos, Quaternion.identity, transform);
+                            for (int i = 0; i <= edge.weight*4; i++)
+                            {
+                                foreach(Transform f in hex)
+                                {
+                                    if (Vector3.Distance(pos, f.position) < rDist + 0.5f)
+                                    {
+                                        Debug.Log("dist: " + Vector3.Distance(pos, f.position));
+                                        return true;
+                                    }
+                                }
+                                
+                                pos += dir * rDist/2;
+                                //Instantiate(help, pos, Quaternion.identity, transform);
+                            }
+                            pos = edge.face1.position;
+                        }
+                    }
+                }
             }
-        }
-        else
-        {
-
         }
         
         return false;

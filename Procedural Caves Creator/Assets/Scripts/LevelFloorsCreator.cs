@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.SceneManagement;
-using UnityEngine.Audio;
+using UnityEngine.UI;
 
 public class LevelFloorsCreator : MonoBehaviour
 {
@@ -10,91 +9,205 @@ public class LevelFloorsCreator : MonoBehaviour
 
     [Header("Level Elements")]
     [SerializeField] private GameObject floorPrefab;
-    [SerializeField] private List<GameObject> nextInitCaves;
+    [SerializeField] private GameObject cavePrefab;
 
-    [Header("Variables")]
-    [SerializeField] private int MIN_FLOORS;
-    [SerializeField] private int MAX_FLOORS;
-    [SerializeField] private int numFloors;
-    [SerializeField] private int MIN_NODES;
-    [SerializeField] private int MAX_NODES;
-    [SerializeField] private int MIN_NEXT_HEXS;
-    [SerializeField] private int MAX_NEXT_HEXS;
-    [SerializeField] private int seed;
+    [Header("UI")]
+    [SerializeField] private Button randomSpecsButton;
+    [SerializeField] private InputField minFloorsInput;
+    [SerializeField] private InputField maxFloorsInput;
+    [SerializeField] private InputField minHexsInput;
+    [SerializeField] private InputField maxHexsInput;
+    [SerializeField] private InputField minConnsInput;
+    [SerializeField] private InputField maxConnsInput;
+    [SerializeField] private Toggle fallingPath;
+    [SerializeField] private Toggle gems;
+    [SerializeField] private Toggle columns;
+    [SerializeField] private Toggle rocks;
+    [SerializeField] private InputField seedInput;
+    [SerializeField] private Button randomSeed;
+    [SerializeField] private Toggle infinite;
+    [SerializeField] private Button generateLevelButton;
 
-    public int level { get; private set; }
-    [SerializeField] private bool infinite;
-    private float time;
-    private string sceneName;
+    //Variables
+    private const int MIN_FLOORS = 1;
+    private const int MAX_FLOORS = 5;
+    private const int MIN_HEXS = 1;
+    private const int MAX_HEXS = 100;
+    private const int MIN_CONNS = 1;
+    private const int MAX_CONNS = 10;
+
+    private int numFloors;
+    private int numHexs;
+    private int numConns;
+    private int seed;
     public const float FLOOR_HEIGHT = 25f;
+    private List<GameObject> nextInitCaves;
     public List<GameObject> levelFloorsList;
     private List<SimpleHexLevel> levelFloorScriptsList;
-    private SimpleHexLevel fallingPathFloorScript;
+    private float time;
+    private float maxTimer = 5f;
+    private bool infiniteLevels = false;
 
 
     private void Awake()
     {
         instance = this;
 
-        //Initial Global Variables:
-        //seed
-        if (infinite)
-        {
-            seed = UnityEngine.Random.Range(0, System.Int32.MaxValue);
-        }
-
-        UnityEngine.Random.InitState(seed);
-        Debug.Log(seed);
-
-        time = 0f;
-        sceneName = SceneManager.GetActiveScene().name;
-
-
+        nextInitCaves = new List<GameObject>();
         levelFloorsList = new List<GameObject>();
         levelFloorScriptsList = new List<SimpleHexLevel>();
-
-        numFloors = UnityEngine.Random.Range(MIN_FLOORS, MAX_FLOORS);
     }
 
     void Start()
     {
-        if (!CreateFloorLevels())
-        {
-            return;
-        }
+        randomSpecsButton.onClick.AddListener(RandomSpecs);
+        randomSeed.onClick.AddListener(RandomSeed);
+        generateLevelButton.onClick.AddListener(GenerateLevel);
 
-        ConnectVerticalHexs();
-        CreateFallingPathInFloor();
-        GenerateRocksInFloor();
-
-
-        //TUNNEL BLOCKERS
-        foreach (SimpleHexLevel floor in levelFloorScriptsList)
-        {
-            floor.ActivateTunnelBlockers();
-        }
+        RandomSpecs();
+        //int rnd = 1;
+        //minFloorsInput.text = rnd.ToString();
+        //maxFloorsInput.text = rnd.ToString();
+        //rnd = 100;
+        //minHexsInput.text = rnd.ToString();
+        //maxHexsInput.text = rnd.ToString();
+        //rnd = 1;
+        //minConnsInput.text = rnd.ToString();
+        //maxConnsInput.text = rnd.ToString();
+        //rnd = 1;
+        //seedInput.text = rnd.ToString();
     }
     
     void Update()
     {
-        if (infinite)
+        if (infiniteLevels)
         {
-            if (Input.GetKey(KeyCode.Space))
+            time += Time.deltaTime;
+            if (time > maxTimer)
             {
-                Debug.Log("space");
-            }
-            else
-            {
-                time += Time.deltaTime;
-                if (time > 2f)
-                {
-
-                }
+                time = 0f;
+                RandomSeed();
+                GenerateLevel();
             }
         }
     }
 
-    private bool CreateFloorLevels()
+    #region UI Listeners
+
+    private void RandomSpecs()
+    {
+        int rnd = Random.Range(MIN_FLOORS, MAX_FLOORS);
+        minFloorsInput.text = rnd.ToString();
+        maxFloorsInput.text = rnd.ToString();
+        rnd = Random.Range(MIN_HEXS, MAX_HEXS);
+        minHexsInput.text = rnd.ToString();
+        maxHexsInput.text = rnd.ToString();
+        rnd = Random.Range(MIN_CONNS, MAX_CONNS);
+        minConnsInput.text = rnd.ToString();
+        maxConnsInput.text = rnd.ToString();
+        RandomSeed();
+    }
+
+    private void RandomSeed()
+    {
+        seed = UnityEngine.Random.Range(0, System.Int32.MaxValue);
+        seedInput.text = seed.ToString();
+    }
+
+    private void GenerateLevel()
+    {
+        //eliminate last level:
+        while (levelFloorsList.Count != 0)
+        {
+            DestroyImmediate(levelFloorsList[0]);
+            levelFloorsList.RemoveAt(0);
+        }
+        levelFloorScriptsList.Clear();
+
+        while (nextInitCaves.Count != 0)
+        {
+            DestroyImmediate(nextInitCaves[0]);
+            nextInitCaves.RemoveAt(0);
+        }
+        nextInitCaves.Clear();
+
+        while(transform.childCount > 0)
+        {
+            DestroyImmediate(transform.GetChild(0).gameObject);
+        }
+
+        Debug.Log("childs: " + transform.childCount);
+
+        //new level
+        GameObject firstCave = Instantiate(cavePrefab, transform);
+        nextInitCaves.Add(firstCave);
+
+        UnityEngine.Random.InitState(GetInt(seedInput));
+
+        numFloors = UnityEngine.Random.Range(GetInt(minFloorsInput), GetInt(maxFloorsInput));
+        numHexs = UnityEngine.Random.Range(GetInt(minHexsInput), GetInt(maxHexsInput));
+        numConns = UnityEngine.Random.Range(GetInt(minConnsInput), GetInt(maxConnsInput));
+
+        InputChecker();
+
+        CreateFloorLevels();
+        ConnectVerticalHexs();
+
+        if(fallingPath.isOn)
+            CreateFallingPathInFloor();
+        if(rocks.isOn)
+            GenerateRocksInFloor();
+
+
+        if (infinite.isOn != infiniteLevels)
+        {
+            infiniteLevels = infinite.isOn;
+        }
+    }
+
+    private int GetInt(InputField text)
+    {
+        return int.Parse(text.text.ToString(), System.Globalization.NumberStyles.Integer);
+    }
+
+    private void InputChecker()
+    {
+        int lastNum = numFloors;
+        Mathf.Clamp(numFloors, MIN_FLOORS, MAX_FLOORS);
+        if(lastNum != numFloors)
+        {
+            minFloorsInput.text = numFloors.ToString();
+            maxFloorsInput.text = numFloors.ToString();
+        }
+
+        lastNum = numHexs;
+        Mathf.Clamp(numHexs, MIN_HEXS, MAX_HEXS);
+        if(lastNum != numHexs)
+        {
+            minHexsInput.text = numHexs.ToString();
+            maxHexsInput.text = numHexs.ToString();
+        }
+
+        lastNum = numConns;
+        Mathf.Clamp(numConns, MIN_CONNS, MAX_CONNS);
+
+        if (numConns > numHexs && numHexs > 1)
+        {
+            numConns = numHexs - 1;
+        }
+
+        if(lastNum != numConns)
+        {
+            minConnsInput.text = numConns.ToString();
+            maxConnsInput.text = numConns.ToString();
+        }
+    }
+
+    #endregion
+
+    #region LevelGeneration
+
+    private void CreateFloorLevels()
     {
         for(int i= 0; i<numFloors; i++)
         {
@@ -108,7 +221,7 @@ public class LevelFloorsCreator : MonoBehaviour
 
 
             //Create the new floor passing the caves to be in the next one
-            floorScript.CreateFloor(nextInitCaves, MIN_NODES, MAX_NODES, MIN_NEXT_HEXS, MAX_NEXT_HEXS, i==numFloors-1, level);
+            floorScript.CreateFloor(nextInitCaves, numHexs, numConns, i==numFloors-1, gems.isOn, columns.isOn);
 
             //add to the floor list
             levelFloorsList.Add(floor);
@@ -118,16 +231,16 @@ public class LevelFloorsCreator : MonoBehaviour
             nextInitCaves = floorScript.GetNextFloorCaves();
 
             //amplify next floor
-            MIN_NODES++;
-            MAX_NODES++;
+            numHexs++;
 
-            Debug.Log("floor " + floor.transform.name + " instantiated");
             if (floorScript.impossibleFloor)
             {
-                return false;
+                RandomSeed();
+                GenerateLevel();
+
+                return;
             }
         }
-        return true;
     }
 
     private void ConnectVerticalHexs()
@@ -149,7 +262,6 @@ public class LevelFloorsCreator : MonoBehaviour
         int rnd = UnityEngine.Random.Range(0, levelFloorScriptsList.Count);
 
         levelFloorScriptsList[rnd].CreateFallingPath();
-        fallingPathFloorScript = levelFloorScriptsList[rnd];
     }
 
     private void GenerateRocksInFloor()
@@ -160,9 +272,10 @@ public class LevelFloorsCreator : MonoBehaviour
         }
     }
 
-
     public int GetNumFloors()
     {
         return levelFloorsList.Count;
     }
+
+    #endregion
 }
