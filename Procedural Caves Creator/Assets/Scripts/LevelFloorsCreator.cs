@@ -173,7 +173,7 @@ public class LevelFloorsCreator : MonoBehaviour
     private void InputChecker()
     {
         int lastNum = numFloors;
-        Mathf.Clamp(numFloors, MIN_FLOORS, MAX_FLOORS);
+        numFloors = Mathf.Clamp(numFloors, MIN_FLOORS, MAX_FLOORS);
         if(lastNum != numFloors)
         {
             minFloorsInput.text = numFloors.ToString();
@@ -181,7 +181,7 @@ public class LevelFloorsCreator : MonoBehaviour
         }
 
         lastNum = numHexs;
-        Mathf.Clamp(numHexs, MIN_HEXS, MAX_HEXS);
+        numHexs = Mathf.Clamp(numHexs, MIN_HEXS, MAX_HEXS);
         if(lastNum != numHexs)
         {
             minHexsInput.text = numHexs.ToString();
@@ -189,7 +189,7 @@ public class LevelFloorsCreator : MonoBehaviour
         }
 
         lastNum = numConns;
-        Mathf.Clamp(numConns, MIN_CONNS, MAX_CONNS);
+        numConns = Mathf.Clamp(numConns, MIN_CONNS, MAX_CONNS);
 
         if (numConns > numHexs && numHexs > 1)
         {
