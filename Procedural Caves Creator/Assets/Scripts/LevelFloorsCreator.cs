@@ -12,6 +12,7 @@ public class LevelFloorsCreator : MonoBehaviour
     [SerializeField] private GameObject cavePrefab;
 
     [Header("UI")]
+    [SerializeField] private GameObject editorTools;
     [SerializeField] private Button randomSpecsButton;
     [SerializeField] private InputField minFloorsInput;
     [SerializeField] private InputField maxFloorsInput;
@@ -34,7 +35,7 @@ public class LevelFloorsCreator : MonoBehaviour
     private const int MIN_HEXS = 1;
     private const int MAX_HEXS = 100;
     private const int MIN_CONNS = 1;
-    private const int MAX_CONNS = 10;
+    private const int MAX_CONNS = 5;
 
     private int numFloors;
     private int numHexs;
@@ -116,6 +117,8 @@ public class LevelFloorsCreator : MonoBehaviour
 
     private void GenerateLevel()
     {
+        editorTools.SetActive(false);
+
         //eliminate last level:
         while (levelFloorsList.Count != 0)
         {
@@ -163,6 +166,8 @@ public class LevelFloorsCreator : MonoBehaviour
         {
             infiniteLevels = infinite.isOn;
         }
+
+        editorTools.SetActive(true);
     }
 
     private int GetInt(InputField text)
