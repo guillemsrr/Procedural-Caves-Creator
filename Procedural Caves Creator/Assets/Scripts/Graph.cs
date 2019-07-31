@@ -691,7 +691,6 @@ public class Graph: MonoBehaviour
                                 {
                                     if (Vector3.Distance(pos, f.position) < rDist + 0.5f)
                                     {
-                                        Debug.Log("dist: " + Vector3.Distance(pos, f.position));
                                         return true;
                                     }
                                 }
