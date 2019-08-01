@@ -33,7 +33,7 @@ public class LevelFloorsCreator : MonoBehaviour
     private const int MIN_FLOORS = 1;
     private const int MAX_FLOORS = 5;
     private const int MIN_HEXS = 1;
-    private const int MAX_HEXS = 100;
+    private const int MAX_HEXS = 200;
     private const int MIN_CONNS = 1;
     private const int MAX_CONNS = 5;
 
