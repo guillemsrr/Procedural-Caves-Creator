@@ -634,7 +634,10 @@ public class Graph: MonoBehaviour
             {
                 if (n.hexsList.Contains(levelHexs[i].transform))
                 {
-                    n.hexsConnectionDict.Add(levelHexs[i],otherHexs[i]);
+                    if (!n.hexsConnectionDict.ContainsKey(levelHexs[i]))
+                    {
+                        n.hexsConnectionDict.Add(levelHexs[i],otherHexs[i]);
+                    }
                     
                     //add tunnel vertical connection:
                     foreach(Transform child in levelHexs[i].transform)
