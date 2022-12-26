@@ -27,7 +27,9 @@ public class LevelFloorsCreator : MonoBehaviour
     [SerializeField] private InputField seedInput;
     [SerializeField] private Button randomSeed;
     [SerializeField] private Toggle infinite;
+    [SerializeField] private InputField InfiniteTimer;
     [SerializeField] private Button generateLevelButton;
+
 
     //Variables
     private const int MIN_FLOORS = 1;
@@ -45,9 +47,9 @@ public class LevelFloorsCreator : MonoBehaviour
     private List<GameObject> nextInitCaves;
     public List<GameObject> levelFloorsList;
     private List<SimpleHexLevel> levelFloorScriptsList;
-    private float time;
-    private float maxTimer = 5f;
     private bool infiniteLevels = false;
+    private float time;
+    private float maxTime;
 
 
     private void Awake()
@@ -66,17 +68,6 @@ public class LevelFloorsCreator : MonoBehaviour
         generateLevelButton.onClick.AddListener(GenerateLevel);
 
         RandomSpecs();
-        //int rnd = 1;
-        //minFloorsInput.text = rnd.ToString();
-        //maxFloorsInput.text = rnd.ToString();
-        //rnd = 100;
-        //minHexsInput.text = rnd.ToString();
-        //maxHexsInput.text = rnd.ToString();
-        //rnd = 1;
-        //minConnsInput.text = rnd.ToString();
-        //maxConnsInput.text = rnd.ToString();
-        //rnd = 1;
-        //seedInput.text = rnd.ToString();
     }
     
     void Update()
@@ -84,7 +75,7 @@ public class LevelFloorsCreator : MonoBehaviour
         if (infiniteLevels)
         {
             time += Time.deltaTime;
-            if (time > maxTimer)
+            if (time > maxTime)
             {
                 time = 0f;
                 RandomSeed();
@@ -162,10 +153,8 @@ public class LevelFloorsCreator : MonoBehaviour
             GenerateRocksInFloor();
 
 
-        if (infinite.isOn != infiniteLevels)
-        {
-            infiniteLevels = infinite.isOn;
-        }
+        infiniteLevels = infinite.isOn;
+        maxTime = float.Parse(InfiniteTimer.text);
 
         editorTools.SetActive(true);
     }
